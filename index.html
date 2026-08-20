@@ -6,30 +6,27 @@
     <title>WhatsApp Group Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 font-sans">
+<body class="bg-gray-50 font-sans">
 
     <header class="bg-green-600 text-white p-4 text-center shadow-md">
         <h1 class="text-xl font-bold">📱 WhatsApp Group Hub</h1>
-        <p class="text-sm">Sabhi categories ke best WhatsApp groups aur channels!</p>
     </header>
 
     <div class="container mx-auto p-4 max-w-md">
-        <!-- WhatsApp Channel Link -->
-        <a href="https://whatsapp.com/channel/YOUR_CHANNEL_ID" target="_blank" class="block bg-blue-600 text-white text-center py-2.5 rounded-lg font-bold mb-4 shadow hover:bg-blue-700">📢 Mera WhatsApp Channel Join Karein</a>
-
-        <!-- Add Group Button -->
-        <a href="add.html" class="block bg-green-500 text-white text-center py-3 rounded-lg font-bold mb-4 shadow hover:bg-green-600">+ Apna Group Add Karein</a>
-
-        <!-- Search Bar -->
-        <input type="text" id="searchInput" oninput="filterGroups()" placeholder="🔍 Group ya Channel search karein..." class="w-full p-3 border rounded-lg mb-6 shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500">
-
-        <!-- Groups List Container -->
-        <div id="group-list" class="space-y-4">
-            <p class="text-center text-gray-500">Groups load ho rahe hain...</p>
+        <div class="bg-green-50 border border-green-200 text-green-800 text-center py-2 rounded-lg font-medium text-sm mb-4 shadow-sm">
+            🔥 Total Active: <span id="group-count" class="font-bold">0</span>
         </div>
+
+        <!-- Updated Channel Link -->
+        <a href="https://whatsapp.com/channel/0029Vb8KO7V8kyyOVT7fwn1T" target="_blank" class="block bg-blue-600 text-white text-center py-2.5 rounded-lg font-bold mb-3 shadow hover:bg-blue-700 transition">📢 Mera Official Channel Join Karein</a>
+
+        <a href="add.html" class="block bg-green-500 text-white text-center py-3 rounded-lg font-bold mb-4 shadow hover:bg-green-600 transition">+ Apna Group Add Karein</a>
+
+        <input type="text" id="searchInput" oninput="filterGroups()" placeholder="🔍 Group search karein..." class="w-full p-3 border rounded-lg mb-4 shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-white">
+
+        <div id="group-list" class="space-y-4"></div>
     </div>
 
-    <!-- Firebase Scripts -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -50,47 +47,30 @@
         let allGroups = [];
 
         async function loadGroups() {
-            const listDiv = document.getElementById("group-list");
-            listDiv.innerHTML = "";
-            try {
-                const querySnapshot = await getDocs(collection(db, "groups"));
-                if(querySnapshot.empty) {
-                    listDiv.innerHTML = "<p class='text-center text-gray-500'>Abhi koi group nahi hai. Aap add karein!</p>";
-                    return;
-                }
-                
-                allGroups = [];
-                querySnapshot.forEach((doc) => {
-                    allGroups.push(doc.data());
-                });
-
-                displayGroups(allGroups);
-            } catch (e) {
-                listDiv.innerHTML = "<p class='text-center text-red-500'>Error loading groups: " + e.message + "</p>";
-            }
+            const querySnapshot = await getDocs(collection(db, "groups"));
+            allGroups = [];
+            querySnapshot.forEach((doc) => { allGroups.push(doc.data()); });
+            document.getElementById("group-count").innerText = allGroups.length;
+            displayGroups(allGroups);
         }
 
         window.displayGroups = function(groups) {
             const listDiv = document.getElementById("group-list");
             listDiv.innerHTML = "";
-
-            if(groups.length === 0) {
-                listDiv.innerHTML = "<p class='text-center text-gray-500'>Koi group nahi mila.</p>";
-                return;
-            }
-
             groups.forEach((g) => {
-                const typeBadge = g.type ? g.type : "WhatsApp Group";
-                const badgeColor = typeBadge.includes("Channel") ? "bg-blue-100 text-blue-800" : "bg-green-100 text-green-800";
+                // Auto-icon based on category
+                const icon = g.category === 'Gaming' ? '🎮' : g.category === 'Technology' ? '💻' : g.category === 'Education' ? '📚' : '📱';
                 
                 listDiv.innerHTML += `
-                    <div class="bg-white p-4 rounded-lg shadow border group-card">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-xs ${badgeColor} px-2 py-1 rounded font-semibold">${typeBadge}</span>
-                            <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">${g.category || 'General'}</span>
+                    <div class="bg-white p-4 rounded-lg shadow-sm border flex items-center space-x-4">
+                        <div class="text-3xl bg-gray-100 p-2 rounded-full">${icon}</div>
+                        <div class="flex-1">
+                            <h3 class="font-bold text-gray-800">${g.name}</h3>
+                            <span class="text-[10px] uppercase font-bold text-gray-400">${g.category}</span>
+                            <div class="flex space-x-2 mt-2">
+                                <a href="${g.link}" target="_blank" class="bg-green-600 text-white px-4 py-1 rounded text-xs font-bold">Join</a>
+                            </div>
                         </div>
-                        <h3 class="font-bold text-lg mb-2">${g.name}</h3>
-                        <a href="${g.link}" target="_blank" class="block bg-green-600 text-white text-center py-2 rounded font-medium hover:bg-green-700">Join ${typeBadge}</a>
                     </div>
                 `;
             });
@@ -98,7 +78,7 @@
 
         window.filterGroups = function() {
             const query = document.getElementById("searchInput").value.toLowerCase();
-            const filtered = allGroups.filter(g => g.name.toLowerCase().includes(query) || (g.category && g.category.toLowerCase().includes(query)));
+            const filtered = allGroups.filter(g => g.name.toLowerCase().includes(query));
             displayGroups(filtered);
         }
 
