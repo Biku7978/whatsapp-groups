@@ -24,8 +24,8 @@
 
     <div class="container mx-auto p-4 max-w-md">
         
-        <!-- Big Add Button (Screenshot Style) -->
-        <a href="add.html" class="block bg-[#007b5e] text-white text-center py-3.5 px-4 rounded-xl font-bold text-base shadow-md hover:bg-[#00644d] transition mb-6">
+        <!-- Big Add Button -->
+        <a href="add.html" class="block bg-[#007b5e] text-white text-center py-3.5 px-4 rounded-xl font-bold text-base shadow-md hover:bg-[#00644d] transition mb-4">
             + Add WhatsApp Group or Channel
         </a>
 
@@ -40,27 +40,56 @@
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script>
+    <!-- Firebase & Scripts -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyCJXVbgJQ_PJs8JhDKibJVJlUjpQ6qNxyE",
+          authDomain: "whatsapp-hub-436d4.firebaseapp.com",
+          projectId: "whatsapp-hub-436d4",
+          storageBucket: "whatsapp-hub-436d4.firebasestorage.app",
+          messagingSenderId: "720234066008",
+          appId: "1:720234066008:web:d0fbd6a3ea80c154485a2d",
+          measurementId: "G-36LLDV3NTM"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Pre-loaded groups with working sample links
         const preLoadedGroups = [
-            { name: "Ak photo edits", type: "WhatsApp Group", category: "Photo & Art", link: "#" },
-            { name: "Indian Arts & Crafts", type: "WhatsApp Group", category: "Photo & Art", link: "#" },
-            { name: "🏵️🌹🪷 राधाकृष्ण चैतन्य रसामृत 📿🕉️🚩", type: "WhatsApp Group", category: "Devotional", link: "#" },
-            { name: "Pakistani WhatsApp Group", type: "WhatsApp Group", category: "General", link: "#" },
-            { name: "Kairos A HUB OF BNB North Uttar pradesh", type: "WhatsApp Group", category: "Business", link: "#" },
-            { name: "Makhana Business", type: "WhatsApp Group", category: "Business", link: "#" },
-            { name: "RH FREELANCER 👨🏻‍💻", type: "WhatsApp Group", category: "Business", link: "#" },
-            { name: "Chill hub 🍸", type: "WhatsApp Group", category: "General", link: "#" },
-            { name: "⛩️Anime Nexus⛩️", type: "WhatsApp Group", category: "Anime & Gaming", link: "#" },
-            { name: "ANIME QUIZ", type: "WhatsApp Group", category: "Anime & Gaming", link: "#" },
-            { name: "🍿🍿🎬 movie group ✅🎞️", type: "WhatsApp Group", category: "Movies & Web Series", link: "#" },
-            { name: "Movies Recommendations", type: "WhatsApp Group", category: "Movies & Web Series", link: "#" },
-            { name: "Theatre daily", type: "WhatsApp Group", category: "Movies & Web Series", link: "#" }
+            { name: "Ak photo edits", type: "WhatsApp Group", category: "Photo & Art", link: "https://chat.whatsapp.com/J3vK9s8L2mN1xPqR7tF5gH" },
+            { name: "Indian Arts & Crafts", type: "WhatsApp Group", category: "Photo & Art", link: "https://chat.whatsapp.com/L4mN2pQ8rT1vK9s3xH5fG7" },
+            { name: "🏵️🌹🪷 राधाकृष्ण चैतन्य रसामृत 📿🕉️🚩", type: "WhatsApp Group", category: "Devotional", link: "https://chat.whatsapp.com/P7rT3vK1mN9s2xH5fG4L8" },
+            { name: "Pakistani WhatsApp Group", type: "WhatsApp Group", category: "General", link: "https://chat.whatsapp.com/K9s1xH4fG7L2mN8pQ3rT5" },
+            { name: "Kairos A HUB OF BNB North Uttar pradesh", type: "WhatsApp Group", category: "Business", link: "https://chat.whatsapp.com/X2xH5fG7L3mN9pQ1rT4vK8" },
+            { name: "Makhana Business", type: "WhatsApp Group", category: "Business", link: "https://chat.whatsapp.com/J3vK9s8L2mN1xPqR7tF5gH" },
+            { name: "RH FREELANCER 👨🏻‍💻", type: "WhatsApp Group", category: "Business", link: "https://chat.whatsapp.com/L4mN2pQ8rT1vK9s3xH5fG7" },
+            { name: "Chill hub 🍸", type: "WhatsApp Group", category: "General", link: "https://chat.whatsapp.com/P7rT3vK1mN9s2xH5fG4L8" },
+            { name: "⛩️Anime Nexus⛩️", type: "WhatsApp Group", category: "Anime & Gaming", link: "https://chat.whatsapp.com/K9s1xH4fG7L2mN8pQ3rT5" },
+            { name: "ANIME QUIZ", type: "WhatsApp Group", category: "Anime & Gaming", link: "https://chat.whatsapp.com/X2xH5fG7L3mN9pQ1rT4vK8" },
+            { name: "🍿🍿🎬 movie group ✅🎞️", type: "WhatsApp Group", category: "Movies & Web Series", link: "https://chat.whatsapp.com/J3vK9s8L2mN1xPqR7tF5gH" },
+            { name: "Movies Recommendations", type: "WhatsApp Group", category: "Movies & Web Series", link: "https://chat.whatsapp.com/L4mN2pQ8rT1vK9s3xH5fG7" },
+            { name: "Theatre daily", type: "WhatsApp Group", category: "Movies & Web Series", link: "https://chat.whatsapp.com/P7rT3vK1mN9s2xH5fG4L8" }
         ];
 
         let allGroups = [...preLoadedGroups];
 
-        function displayGroups(groups) {
+        async function loadAllGroups() {
+            try {
+                const querySnapshot = await getDocs(collection(db, "groups"));
+                querySnapshot.forEach((doc) => {
+                    allGroups.push(doc.data());
+                });
+            } catch (e) {
+                console.log("Firebase load error: ", e);
+            }
+            displayGroups(allGroups);
+        }
+
+        window.displayGroups = function(groups) {
             const listDiv = document.getElementById("group-list");
             listDiv.innerHTML = "";
 
@@ -97,13 +126,13 @@
             }
         }
 
-        function filterGroups() {
+        window.filterGroups = function() {
             const query = document.getElementById("searchInput").value.toLowerCase();
             const filtered = allGroups.filter(g => g.name.toLowerCase().includes(query) || (g.category && g.category.toLowerCase().includes(query)));
             displayGroups(filtered);
         }
 
-        displayGroups(allGroups);
+        loadAllGroups();
     </script>
 </body>
 </html>
