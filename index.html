@@ -1,24 +1,108 @@
-<!-- ... (header wahi rahega) ... -->
-<div class="container mx-auto p-4 max-w-md">
-    <!-- Channel Link -->
-    <a href="APNA_WHATSAPP_CHANNEL_LINK_YAHAN_DAALEN" target="_blank" class="block bg-blue-600 text-white text-center py-2 rounded-lg font-bold mb-4 shadow">📢 Mera WhatsApp Channel Join Karein</a>
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Group Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
 
-    <!-- Search Bar -->
-    <input type="text" id="searchInput" oninput="filterGroups()" placeholder="Group search karein..." class="w-full p-3 border rounded-lg mb-4">
-    
-    <div id="group-list" class="space-y-4"></div>
-</div>
+    <header class="bg-green-600 text-white p-4 text-center shadow-md">
+        <h1 class="text-xl font-bold">📱 WhatsApp Group Hub</h1>
+        <p class="text-sm">Sabhi categories ke best WhatsApp groups aur channels!</p>
+    </header>
 
-<script type="module">
-    // ... (Firebase initialization wahi rahega) ...
-    // ... (loadGroups function me data fetch karne ke baad yeh logic add karein) ...
-    
-    window.filterGroups = () => {
-        const query = document.getElementById("searchInput").value.toLowerCase();
-        const cards = document.querySelectorAll('.group-card');
-        cards.forEach(card => {
-            const name = card.querySelector('h3').innerText.toLowerCase();
-            card.style.display = name.includes(query) ? "block" : "none";
-        });
-    }
-</script>
+    <div class="container mx-auto p-4 max-w-md">
+        <!-- WhatsApp Channel Link -->
+        <a href="https://whatsapp.com/channel/YOUR_CHANNEL_ID" target="_blank" class="block bg-blue-600 text-white text-center py-2.5 rounded-lg font-bold mb-4 shadow hover:bg-blue-700">📢 Mera WhatsApp Channel Join Karein</a>
+
+        <!-- Add Group Button -->
+        <a href="add.html" class="block bg-green-500 text-white text-center py-3 rounded-lg font-bold mb-4 shadow hover:bg-green-600">+ Apna Group Add Karein</a>
+
+        <!-- Search Bar -->
+        <input type="text" id="searchInput" oninput="filterGroups()" placeholder="🔍 Group ya Channel search karein..." class="w-full p-3 border rounded-lg mb-6 shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+
+        <!-- Groups List Container -->
+        <div id="group-list" class="space-y-4">
+            <p class="text-center text-gray-500">Groups load ho rahe hain...</p>
+        </div>
+    </div>
+
+    <!-- Firebase Scripts -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyCJXVbgJQ_PJs8JhDKibJVJlUjpQ6qNxyE",
+          authDomain: "whatsapp-hub-436d4.firebaseapp.com",
+          projectId: "whatsapp-hub-436d4",
+          storageBucket: "whatsapp-hub-436d4.firebasestorage.app",
+          messagingSenderId: "720234066008",
+          appId: "1:720234066008:web:d0fbd6a3ea80c154485a2d",
+          measurementId: "G-36LLDV3NTM"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let allGroups = [];
+
+        async function loadGroups() {
+            const listDiv = document.getElementById("group-list");
+            listDiv.innerHTML = "";
+            try {
+                const querySnapshot = await getDocs(collection(db, "groups"));
+                if(querySnapshot.empty) {
+                    listDiv.innerHTML = "<p class='text-center text-gray-500'>Abhi koi group nahi hai. Aap add karein!</p>";
+                    return;
+                }
+                
+                allGroups = [];
+                querySnapshot.forEach((doc) => {
+                    allGroups.push(doc.data());
+                });
+
+                displayGroups(allGroups);
+            } catch (e) {
+                listDiv.innerHTML = "<p class='text-center text-red-500'>Error loading groups: " + e.message + "</p>";
+            }
+        }
+
+        window.displayGroups = function(groups) {
+            const listDiv = document.getElementById("group-list");
+            listDiv.innerHTML = "";
+
+            if(groups.length === 0) {
+                listDiv.innerHTML = "<p class='text-center text-gray-500'>Koi group nahi mila.</p>";
+                return;
+            }
+
+            groups.forEach((g) => {
+                const typeBadge = g.type ? g.type : "WhatsApp Group";
+                const badgeColor = typeBadge.includes("Channel") ? "bg-blue-100 text-blue-800" : "bg-green-100 text-green-800";
+                
+                listDiv.innerHTML += `
+                    <div class="bg-white p-4 rounded-lg shadow border group-card">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs ${badgeColor} px-2 py-1 rounded font-semibold">${typeBadge}</span>
+                            <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">${g.category || 'General'}</span>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2">${g.name}</h3>
+                        <a href="${g.link}" target="_blank" class="block bg-green-600 text-white text-center py-2 rounded font-medium hover:bg-green-700">Join ${typeBadge}</a>
+                    </div>
+                `;
+            });
+        }
+
+        window.filterGroups = function() {
+            const query = document.getElementById("searchInput").value.toLowerCase();
+            const filtered = allGroups.filter(g => g.name.toLowerCase().includes(query) || (g.category && g.category.toLowerCase().includes(query)));
+            displayGroups(filtered);
+        }
+
+        loadGroups();
+    </script>
+</body>
+</html>
