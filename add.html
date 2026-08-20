@@ -44,7 +44,7 @@
             </select>
 
             <label class="block text-sm font-medium mb-1">Invite Link (WhatsApp Link)</label>
-            <input type="url" id="g-link" placeholder="https://chat.whatsapp.com/... ya channel link" required class="w-full p-2 border rounded mb-4">
+            <input type="url" id="g-link" placeholder="https://chat.whatsapp.com/..." required class="w-full p-2 border rounded mb-4">
 
             <button type="submit" id="sub-btn" class="w-full bg-green-600 text-white py-3 rounded font-bold hover:bg-green-700">Submit Karein</button>
         </form>
@@ -69,6 +69,8 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        document.getElementById("group-file").addEventListener?.(); // safe check
+
         document.getElementById("group-form").addEventListener("submit", async (e) => {
             e.preventDefault();
             const btn = document.getElementById("sub-btn");
@@ -89,7 +91,12 @@
                     createdAt: new Date()
                 });
                 alert("Successfully add ho gaya!");
-                window.location.href = "index.html";
+                
+                // Form clear karein taaki jaldi se doosra group daal sakein
+                document.getElementById("g-name").value = "";
+                document.getElementById("g-link").value = "";
+                btn.innerText = "Submit Karein";
+                btn.disabled = false;
             } catch (error) {
                 alert("Kuch error aa gaya: " + error.message);
                 btn.innerText = "Submit Karein";
