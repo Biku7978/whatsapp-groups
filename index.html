@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GroupsOP - Unlimited WhatsApp Group & Channels</title>
+    <title>GroupsOP - Unlimited WhatsApp & Telegram Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-[#f0f2f5] font-sans text-gray-800">
@@ -12,7 +12,7 @@
     <header class="bg-[#007b5e] text-white p-6 shadow-md">
         <div class="max-w-md mx-auto">
             <h1 class="text-3xl font-extrabold tracking-wide">GroupsOP</h1>
-            <p class="text-sm text-green-100 mt-1">Unlimited WhatsApp Group & Channels</p>
+            <p class="text-sm text-green-100 mt-1">Unlimited WhatsApp & Telegram Groups</p>
             
             <!-- Search Bar -->
             <div class="mt-4 relative">
@@ -26,7 +26,7 @@
         
         <!-- Big Add Button -->
         <a href="add.html" class="block bg-[#007b5e] text-white text-center py-3.5 px-4 rounded-xl font-bold text-base shadow-md hover:bg-[#00644d] transition mb-4">
-            + Add WhatsApp Group or Channel
+            + Add Group or Channel
         </a>
 
         <!-- Official Channel Banner -->
@@ -58,24 +58,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Pre-loaded groups with working sample links
-        const preLoadedGroups = [
-            { name: "Ak photo edits", type: "WhatsApp Group", category: "Photo & Art", link: "https://chat.whatsapp.com/J3vK9s8L2mN1xPqR7tF5gH" },
-            { name: "Indian Arts & Crafts", type: "WhatsApp Group", category: "Photo & Art", link: "https://chat.whatsapp.com/L4mN2pQ8rT1vK9s3xH5fG7" },
-            { name: "🏵️🌹🪷 राधाकृष्ण चैतन्य रसामृत 📿🕉️🚩", type: "WhatsApp Group", category: "Devotional", link: "https://chat.whatsapp.com/P7rT3vK1mN9s2xH5fG4L8" },
-            { name: "Pakistani WhatsApp Group", type: "WhatsApp Group", category: "General", link: "https://chat.whatsapp.com/K9s1xH4fG7L2mN8pQ3rT5" },
-            { name: "Kairos A HUB OF BNB North Uttar pradesh", type: "WhatsApp Group", category: "Business", link: "https://chat.whatsapp.com/X2xH5fG7L3mN9pQ1rT4vK8" },
-            { name: "Makhana Business", type: "WhatsApp Group", category: "Business", link: "https://chat.whatsapp.com/J3vK9s8L2mN1xPqR7tF5gH" },
-            { name: "RH FREELANCER 👨🏻‍💻", type: "WhatsApp Group", category: "Business", link: "https://chat.whatsapp.com/L4mN2pQ8rT1vK9s3xH5fG7" },
-            { name: "Chill hub 🍸", type: "WhatsApp Group", category: "General", link: "https://chat.whatsapp.com/P7rT3vK1mN9s2xH5fG4L8" },
-            { name: "⛩️Anime Nexus⛩️", type: "WhatsApp Group", category: "Anime & Gaming", link: "https://chat.whatsapp.com/K9s1xH4fG7L2mN8pQ3rT5" },
-            { name: "ANIME QUIZ", type: "WhatsApp Group", category: "Anime & Gaming", link: "https://chat.whatsapp.com/X2xH5fG7L3mN9pQ1rT4vK8" },
-            { name: "🍿🍿🎬 movie group ✅🎞️", type: "WhatsApp Group", category: "Movies & Web Series", link: "https://chat.whatsapp.com/J3vK9s8L2mN1xPqR7tF5gH" },
-            { name: "Movies Recommendations", type: "WhatsApp Group", category: "Movies & Web Series", link: "https://chat.whatsapp.com/L4mN2pQ8rT1vK9s3xH5fG7" },
-            { name: "Theatre daily", type: "WhatsApp Group", category: "Movies & Web Series", link: "https://chat.whatsapp.com/P7rT3vK1mN9s2xH5fG4L8" }
-        ];
-
-        let allGroups = [...preLoadedGroups];
+        let allGroups = [];
 
         async function loadAllGroups() {
             try {
@@ -113,10 +96,18 @@
                 `;
 
                 items.forEach(g => {
+                    // Badge color check for WhatsApp vs Telegram
+                    const isTelegram = g.type && g.type.toLowerCase().includes('telegram');
+                    const badgeBg = isTelegram ? 'bg-sky-100 text-sky-700' : 'bg-green-100 text-green-700';
+                    const btnColor = isTelegram ? 'hover:bg-sky-600' : 'hover:bg-green-600';
+
                     html += `
                         <li class="flex justify-between items-center text-sm">
-                            <span class="text-gray-700 font-medium pr-2">${g.name}</span>
-                            <a href="${g.link}" target="_blank" class="bg-green-100 text-green-700 px-3 py-1 rounded-lg font-bold hover:bg-green-600 hover:text-white transition">Join</a>
+                            <div class="pr-2">
+                                <span class="text-gray-700 font-medium block">${g.name}</span>
+                                <span class="text-[10px] ${badgeBg} px-1.5 py-0.5 rounded font-bold">${g.type || 'WhatsApp Group'}</span>
+                            </div>
+                            <a href="${g.link}" target="_blank" class="${badgeBg} px-3 py-1.5 rounded-lg font-bold ${btnColor} hover:text-white transition">Join</a>
                         </li>
                     `;
                 });
