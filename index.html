@@ -10,28 +10,60 @@
 
     <header class="bg-green-600 text-white p-4 text-center shadow-md">
         <h1 class="text-xl font-bold">📱 WhatsApp Group Hub</h1>
-        <p class="text-sm">Sabhi categories ke best WhatsApp groups yahan milege!</p>
+        <p class="text-sm">Sabhi categories ke best WhatsApp groups!</p>
     </header>
 
     <div class="container mx-auto p-4 max-w-md">
-        <!-- Search Bar -->
-        <input type="text" id="search" placeholder="Group search karein..." class="w-full p-3 border rounded-lg mb-4 shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500">
-
-        <!-- Add Group Button -->
         <a href="add.html" class="block bg-green-500 text-white text-center py-3 rounded-lg font-bold mb-6 shadow hover:bg-green-600">+ Apna Group Add Karein</a>
 
         <!-- Groups List Container -->
         <div id="group-list" class="space-y-4">
-            <!-- Sample Group Card -->
-            <div class="bg-white p-4 rounded-lg shadow border">
-                <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded font-semibold">Technology</span>
-                <h3 class="font-bold text-lg mt-2">Android Developers India</h3>
-                <p class="text-sm text-gray-600 mb-3">Coding aur app development ki baatein.</p>
-                <a href="https://chat.whatsapp.com/example" target="_blank" class="block bg-green-600 text-white text-center py-2 rounded font-medium hover:bg-green-700">Join Group</a>
-            </div>
+            <p class="text-center text-gray-500">Groups load ho rahe hain...</p>
         </div>
     </div>
 
+    <!-- Firebase Scripts -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyCJXVbgJQ_PJs8JhDKibJVJlUjpQ6qNxyE",
+          authDomain: "whatsapp-hub-436d4.firebaseapp.com",
+          projectId: "whatsapp-hub-436d4",
+          storageBucket: "whatsapp-hub-436d4.firebasestorage.app",
+          messagingSenderId: "720234066008",
+          appId: "1:720234066008:web:d0fbd6a3ea80c154485a2d",
+          measurementId: "G-36LLDV3NTM"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        async function loadGroups() {
+            const listDiv = document.getElementById("group-list");
+            listDiv.innerHTML = "";
+            try {
+                const querySnapshot = await getDocs(collection(db, "groups"));
+                if(querySnapshot.empty) {
+                    listDiv.innerHTML = "<p class='text-center text-gray-500'>Abhi koi group nahi hai. Aap add karein!</p>";
+                    return;
+                }
+                querySnapshot.forEach((doc) => {
+                    const g = doc.data();
+                    listDiv.innerHTML += `
+                        <div class="bg-white p-4 rounded-lg shadow border">
+                            <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded font-semibold">${g.category}</span>
+                            <h3 class="font-bold text-lg mt-2">${g.name}</h3>
+                            <a href="${g.link}" target="_blank" class="block bg-green-600 text-white text-center py-2 rounded font-medium mt-3 hover:bg-green-700">Join Group</a>
+                        </div>
+                    `;
+                });
+            } catch (e) {
+                listDiv.innerHTML = "<p class='text-center text-red-500'>Error loading groups.</p>";
+            }
+        }
+        loadGroups();
+    </script>
 </body>
 </html>
-
