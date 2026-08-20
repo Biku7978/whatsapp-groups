@@ -3,71 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WhatsApp Group Hub</title>
+    <title>GroupsOP - Unlimited WhatsApp Group & Channels</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-white font-sans text-gray-800">
+<body class="bg-[#f0f2f5] font-sans text-gray-800">
 
-    <!-- Header -->
-    <header class="bg-green-600 text-white p-4 text-center shadow">
-        <h1 class="text-xl font-bold">📱 WhatsApp Group Hub</h1>
-        <p class="text-xs mt-1">Sabhi best WhatsApp groups aur channels</p>
+    <!-- Top Green Header -->
+    <header class="bg-[#007b5e] text-white p-6 shadow-md">
+        <div class="max-w-md mx-auto">
+            <h1 class="text-3xl font-extrabold tracking-wide">GroupsOP</h1>
+            <p class="text-sm text-green-100 mt-1">Unlimited WhatsApp Group & Channels</p>
+            
+            <!-- Search Bar -->
+            <div class="mt-4 relative">
+                <input type="text" id="searchInput" oninput="filterGroups()" placeholder="Search for channel or groups..." class="w-full p-3 pl-4 pr-10 rounded-lg text-gray-800 text-sm focus:outline-none shadow-inner">
+                <span class="absolute right-3 top-3 text-gray-400 font-bold">🔍</span>
+            </div>
+        </div>
     </header>
 
     <div class="container mx-auto p-4 max-w-md">
         
-        <!-- Action Buttons -->
-        <div class="flex gap-2 mb-6">
-            <a href="https://whatsapp.com/channel/0029Vb8KO7V8kyyOVT7fwn1T" target="_blank" class="flex-1 bg-blue-600 text-white text-center py-2.5 rounded-lg font-bold text-sm shadow hover:bg-blue-700">📢 Join Channel</a>
-            <a href="add.html" class="flex-1 bg-green-500 text-white text-center py-2.5 rounded-lg font-bold text-sm shadow hover:bg-green-600">+ Add Group</a>
-        </div>
+        <!-- Big Add Button (Screenshot Style) -->
+        <a href="add.html" class="block bg-[#007b5e] text-white text-center py-3.5 px-4 rounded-xl font-bold text-base shadow-md hover:bg-[#00644d] transition mb-6">
+            + Add WhatsApp Group or Channel
+        </a>
 
-        <!-- Search Bar -->
-        <input type="text" id="searchInput" oninput="filterGroups()" placeholder="🔍 Group search karein..." class="w-full p-2.5 border border-gray-300 rounded-lg mb-6 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+        <!-- Official Channel Banner -->
+        <a href="https://whatsapp.com/channel/0029Vb8KO7V8kyyOVT7fwn1T" target="_blank" class="block bg-blue-600 text-white text-center py-3 px-4 rounded-xl font-bold text-sm shadow-md hover:bg-blue-700 transition mb-6">
+            📢 Join Our Official WhatsApp Channel
+        </a>
 
         <!-- Groups List Container -->
-        <div id="group-list" class="space-y-6">
-            <p class="text-center text-gray-500">Groups load ho rahe hain...</p>
+        <div id="group-list" class="space-y-4">
+            <p class="text-center text-gray-500 py-4">Loading groups...</p>
         </div>
     </div>
 
     <!-- Scripts -->
     <script>
         const preLoadedGroups = [
-            // Photo & Art
             { name: "Ak photo edits", type: "WhatsApp Group", category: "Photo & Art", link: "#" },
             { name: "Indian Arts & Crafts", type: "WhatsApp Group", category: "Photo & Art", link: "#" },
-            
-            // Devotional & Culture
             { name: "🏵️🌹🪷 राधाकृष्ण चैतन्य रसामृत 📿🕉️🚩", type: "WhatsApp Group", category: "Devotional", link: "#" },
-            
-            // General / Pakistani
             { name: "Pakistani WhatsApp Group", type: "WhatsApp Group", category: "General", link: "#" },
-            { name: "✨ হৃদয়ের স্পন্দন ✨", type: "WhatsApp Group", category: "General", link: "#" },
-            { name: "💫SK FAMILY BROAD🙈", type: "WhatsApp Group", category: "General", link: "#" },
-            { name: "Chill hub 🍸", type: "WhatsApp Group", category: "General", link: "#" },
-            
-            // Business & Freelance
             { name: "Kairos A HUB OF BNB North Uttar pradesh", type: "WhatsApp Group", category: "Business", link: "#" },
             { name: "Makhana Business", type: "WhatsApp Group", category: "Business", link: "#" },
-            { name: "Makhana", type: "WhatsApp Group", category: "Business", link: "#" },
             { name: "RH FREELANCER 👨🏻‍💻", type: "WhatsApp Group", category: "Business", link: "#" },
-            { name: "Retail Sales Group Pan-India", type: "WhatsApp Group", category: "Business", link: "#" },
-            { name: "ClixoApp Sales & Marketing", type: "WhatsApp Group", category: "Business", link: "#" },
-            { name: "SMP MC", type: "WhatsApp Group", category: "Business", link: "#" },
-            { name: "Super AmaFlix Demo Group", type: "WhatsApp Group", category: "Business", link: "#" },
-            
-            // Anime & Gaming
+            { name: "Chill hub 🍸", type: "WhatsApp Group", category: "General", link: "#" },
             { name: "⛩️Anime Nexus⛩️", type: "WhatsApp Group", category: "Anime & Gaming", link: "#" },
             { name: "ANIME QUIZ", type: "WhatsApp Group", category: "Anime & Gaming", link: "#" },
-            { name: "Stickers", type: "WhatsApp Group", category: "Anime & Gaming", link: "#" },
-            
-            // Movies & Web Series
             { name: "🍿🍿🎬 movie group ✅🎞️", type: "WhatsApp Group", category: "Movies & Web Series", link: "#" },
             { name: "Movies Recommendations", type: "WhatsApp Group", category: "Movies & Web Series", link: "#" },
-            { name: "Theatre daily", type: "WhatsApp Group", category: "Movies & Web Series", link: "#" },
-            { name: "Paid movies group", type: "WhatsApp Group", category: "Movies & Web Series", link: "#" },
-            { name: "『』𝐁𝐥𝐨𝐨𝐝 𝐌𝐨𝐨𝐧 𝐂𝐨𝐫𝐩𝐨𝐫𝐚𝐭𝐢𝐨𝐧", type: "WhatsApp Group", category: "Movies & Web Series", link: "#" }
+            { name: "Theatre daily", type: "WhatsApp Group", category: "Movies & Web Series", link: "#" }
         ];
 
         let allGroups = [...preLoadedGroups];
@@ -77,7 +65,7 @@
             listDiv.innerHTML = "";
 
             if(groups.length === 0) {
-                listDiv.innerHTML = "<p class='text-center text-gray-500'>Koi group nahi mila.</p>";
+                listDiv.innerHTML = "<p class='text-center text-gray-500'>No groups found.</p>";
                 return;
             }
 
@@ -90,16 +78,16 @@
 
             for (const [category, items] of Object.entries(categories)) {
                 let html = `
-                    <div class="border-b pb-4">
-                        <h2 class="text-xl font-bold text-gray-900 mb-3">${category} WhatsApp Groups</h2>
-                        <ul class="space-y-2.5">
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-4">
+                        <h2 class="text-lg font-bold text-gray-900 mb-3 border-b pb-2">${category}</h2>
+                        <ul class="space-y-3">
                 `;
 
                 items.forEach(g => {
                     html += `
-                        <li class="flex justify-between items-center text-base">
-                            <span class="text-gray-700 font-medium">${g.name}</span>
-                            <a href="${g.link}" target="_blank" class="text-green-600 font-bold hover:underline bg-green-50 px-3 py-1 rounded">Join</a>
+                        <li class="flex justify-between items-center text-sm">
+                            <span class="text-gray-700 font-medium pr-2">${g.name}</span>
+                            <a href="${g.link}" target="_blank" class="bg-green-100 text-green-700 px-3 py-1 rounded-lg font-bold hover:bg-green-600 hover:text-white transition">Join</a>
                         </li>
                     `;
                 });
