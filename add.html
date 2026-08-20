@@ -3,108 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Group or Channel - Hub</title>
+    <title>Add Group Link</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 font-sans p-4">
-    <div class="max-w-md mx-auto bg-white p-6 rounded-2xl shadow-md border border-gray-100">
-        <h2 class="text-xl font-black text-[#007b5e] mb-2">➕ Add Group or Channel</h2>
-        <p class="text-xs text-gray-500 mb-6">Apna WhatsApp ya Telegram link yahan jodein.</p>
+
+    <div class="max-w-md mx-auto bg-white p-6 rounded-2xl shadow-lg mt-10">
+        <h2 class="text-2xl font-black text-[#007b5e] mb-5 text-center">Naya Group Add Karein</h2>
         
-        <form id="group-form" class="space-y-4">
-            <div>
-                <label class="block text-xs font-bold text-gray-700 mb-1">Group / Channel Name</label>
-                <input type="text" id="g-name" placeholder="Jaise: Friend Club" required class="w-full p-3 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#007b5e] bg-gray-50">
-            </div>
+        <div class="space-y-4">
+            <input type="text" id="gName" placeholder="Group ka Naam" class="w-full p-3 border rounded-xl outline-none">
+            
+            <select id="gType" class="w-full p-3 border rounded-xl outline-none">
+                <option value="WhatsApp Group">WhatsApp Group</option>
+                <option value="WhatsApp Channel">WhatsApp Channel</option>
+                <option value="Telegram Group">Telegram Group</option>
+                <option value="Telegram Channel">Telegram Channel</option>
+            </select>
 
-            <div>
-                <label class="block text-xs font-bold text-gray-700 mb-1">Platform Type</label>
-                <select id="g-type" class="w-full p-3 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#007b5e] bg-gray-50">
-                    <option value="WhatsApp Group">WhatsApp Group</option>
-                    <option value="WhatsApp Channel">WhatsApp Channel</option>
-                    <option value="Telegram Group">Telegram Group</option>
-                    <option value="Telegram Channel">Telegram Channel</option>
-                </select>
-            </div>
+            <input type="text" id="gCategory" placeholder="Category (e.g. Movies, Gaming)" class="w-full p-3 border rounded-xl outline-none">
+            <input type="text" id="gLink" placeholder="Invite Link (https://...)" class="w-full p-3 border rounded-xl outline-none">
 
-            <div>
-                <label class="block text-xs font-bold text-gray-700 mb-1">Category</label>
-                <select id="g-cat" class="w-full p-3 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#007b5e] bg-gray-50">
-                    <option value="Girls Group">Girls Group</option>
-                    <option value="Only Girls Group">Only Girls Group</option>
-                    <option value="Friendship">Friendship</option>
-                    <option value="Technology">Technology</option>
-                    <option value="Entertainment">Entertainment</option>
-                    <option value="Gaming">Gaming</option>
-                    <option value="Education">Education</option>
-                    <option value="Jobs & Internships">Jobs & Internships</option>
-                    <option value="Movies & Web Series">Movies & Web Series</option>
-                    <option value="Business">Business</option>
-                    <option value="Devotional">Devotional</option>
-                    <option value="General">General</option>
-                </select>
-            </div>
-
-            <div>
-                <label class="block text-xs font-bold text-gray-700 mb-1">Invite Link (URL)</label>
-                <input type="url" id="g-link" placeholder="https://chat.whatsapp.com/... ya https://t.me/..." required class="w-full p-3 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#007b5e] bg-gray-50">
-            </div>
-
-            <button type="submit" id="sub-btn" class="w-full bg-[#007b5e] text-white py-3.5 rounded-xl font-bold hover:bg-[#00644d] transition text-sm shadow">Submit Now</button>
-        </form>
-        
-        <a href="index.html" class="block text-center text-xs font-bold text-gray-600 mt-5 hover:underline">← Back to Home</a>
+            <button onclick="saveGroup()" id="btnSave" class="w-full bg-[#007b5e] text-white py-3 rounded-xl font-bold hover:bg-[#00644d] transition">Submit Link</button>
+            <a href="index.html" class="block text-center text-sm text-gray-500 mt-3 underline">Home Page par wapas jayein</a>
+        </div>
     </div>
 
-    <!-- Firebase Scripts -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        const firebaseConfig = {
+        const db = getFirestore(initializeApp({
           apiKey: "AIzaSyCJXVbgJQ_PJs8JhDKibJVJlUjpQ6qNxyE",
           authDomain: "whatsapp-hub-436d4.firebaseapp.com",
           projectId: "whatsapp-hub-436d4",
           storageBucket: "whatsapp-hub-436d4.firebasestorage.app",
           messagingSenderId: "720234066008",
-          appId: "1:720234066008:web:d0fbd6a3ea80c154485a2d",
-          measurementId: "G-36LLDV3NTM"
-        };
+          appId: "1:720234066008:web:d0fbd6a3ea80c154485a2d"
+        }));
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        document.getElementById("group-form").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById("sub-btn");
+        window.saveGroup = async function() {
+            const btn = document.getElementById("btnSave");
             btn.innerText = "Saving...";
-            btn.disabled = true;
-
-            const name = document.getElementById("g-name").value;
-            const type = document.getElementById("g-type").value;
-            const category = document.getElementById("g-cat").value;
-            const link = document.getElementById("g-link").value;
-
+            
             try {
                 await addDoc(collection(db, "groups"), {
-                    name: name,
-                    type: type,
-                    category: category,
-                    link: link,
-                    createdAt: new Date()
+                    name: document.getElementById("gName").value,
+                    type: document.getElementById("gType").value,
+                    category: document.getElementById("gCategory").value,
+                    link: document.getElementById("gLink").value
                 });
-                alert("Group successfully added!");
-                
-                document.getElementById("g-name").value = "";
-                document.getElementById("g-link").value = "";
-                btn.innerText = "Submit Now";
-                btn.disabled = false;
-            } catch (error) {
-                alert("Error: " + error.message);
-                btn.innerText = "Submit Now";
-                btn.disabled = false;
+                alert("Success! Link add ho gaya.");
+                window.location.href = "index.html";
+            } catch (e) {
+                alert("Error: " + e.message);
+                btn.innerText = "Submit Link";
             }
-        });
+        }
     </script>
 </body>
 </html>
