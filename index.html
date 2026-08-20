@@ -33,25 +33,41 @@
 
     <!-- Scripts -->
     <script>
-        // Yahan pehle se saare groups aur channels add kiye gaye hain taaki aapko manual add na karna pade
         const preLoadedGroups = [
-            // Technology
-            { name: "Tech Geniuses India", type: "WhatsApp Group", category: "Technology", link: "https://chat.whatsapp.com/J3vK9s8L2mN1xPqR7tF5gH" },
-            { name: "Coding & Web Tips Channel", type: "WhatsApp Channel", category: "Technology", link: "https://whatsapp.com/channel/0029V1TechTipsHub" },
+            // Photo & Art
+            { name: "Ak photo edits", type: "WhatsApp Group", category: "Photo & Art", link: "#" },
+            { name: "Indian Arts & Crafts", type: "WhatsApp Group", category: "Photo & Art", link: "#" },
             
-            // Education
-            { name: "English Speaking Practice", type: "WhatsApp Group", category: "Education", link: "https://chat.whatsapp.com/L4mN2pQ8rT1vK9s3xH5fG7" },
-            { name: "Daily GK & Current Affairs", type: "WhatsApp Channel", category: "Education", link: "https://whatsapp.com/channel/0029V2EducationGK" },
+            // Devotional & Culture
+            { name: "🏵️🌹🪷 राधाकृष्ण चैतन्य रसामृत 📿🕉️🚩", type: "WhatsApp Group", category: "Devotional", link: "#" },
             
-            // Jobs & Internships
-            { name: "Work From Home Daily Jobs", type: "WhatsApp Group", category: "Jobs & Internships", link: "https://chat.whatsapp.com/P7rT3vK1mN9s2xH5fG4L8" },
-            { name: "Sarkari & Private Alerts", type: "WhatsApp Channel", category: "Jobs & Internships", link: "https://whatsapp.com/channel/0029V3JobAlerts24" },
+            // General / Pakistani
+            { name: "Pakistani WhatsApp Group", type: "WhatsApp Group", category: "General", link: "#" },
+            { name: "✨ হৃদয়ের স্পন্দন ✨", type: "WhatsApp Group", category: "General", link: "#" },
+            { name: "💫SK FAMILY BROAD🙈", type: "WhatsApp Group", category: "General", link: "#" },
+            { name: "Chill hub 🍸", type: "WhatsApp Group", category: "General", link: "#" },
             
-            // Gaming
-            { name: "BGMI & Free Fire Squads", type: "WhatsApp Group", category: "Gaming", link: "https://chat.whatsapp.com/K9s1xH4fG7L2mN8pQ3rT5" },
+            // Business & Freelance
+            { name: "Kairos A HUB OF BNB North Uttar pradesh", type: "WhatsApp Group", category: "Business", link: "#" },
+            { name: "Makhana Business", type: "WhatsApp Group", category: "Business", link: "#" },
+            { name: "Makhana", type: "WhatsApp Group", category: "Business", link: "#" },
+            { name: "RH FREELANCER 👨🏻‍💻", type: "WhatsApp Group", category: "Business", link: "#" },
+            { name: "Retail Sales Group Pan-India", type: "WhatsApp Group", category: "Business", link: "#" },
+            { name: "ClixoApp Sales & Marketing", type: "WhatsApp Group", category: "Business", link: "#" },
+            { name: "SMP MC", type: "WhatsApp Group", category: "Business", link: "#" },
+            { name: "Super AmaFlix Demo Group", type: "WhatsApp Group", category: "Business", link: "#" },
             
-            // Entertainment
-            { name: "Comedy & Fun Memes Club", type: "WhatsApp Group", category: "Entertainment", link: "https://chat.whatsapp.com/X2xH5fG7L3mN9pQ1rT4vK8" }
+            // Anime & Gaming
+            { name: "⛩️Anime Nexus⛩️", type: "WhatsApp Group", category: "Anime & Gaming", link: "#" },
+            { name: "ANIME QUIZ", type: "WhatsApp Group", category: "Anime & Gaming", link: "#" },
+            { name: "Stickers", type: "WhatsApp Group", category: "Anime & Gaming", link: "#" },
+            
+            // Movies & Web Series
+            { name: "🍿🍿🎬 movie group ✅🎞️", type: "WhatsApp Group", category: "Movies & Web Series", link: "#" },
+            { name: "Movies Recommendations", type: "WhatsApp Group", category: "Movies & Web Series", link: "#" },
+            { name: "Theatre daily", type: "WhatsApp Group", category: "Movies & Web Series", link: "#" },
+            { name: "Paid movies group", type: "WhatsApp Group", category: "Movies & Web Series", link: "#" },
+            { name: "『』𝐁𝐥𝐨𝐨𝐝 𝐌𝐨𝐨𝐧 𝐂𝐨𝐫𝐩𝐨𝐫𝐚𝐭𝐢𝐨𝐧", type: "WhatsApp Group", category: "Movies & Web Series", link: "#" }
         ];
 
         let allGroups = [...preLoadedGroups];
@@ -65,7 +81,6 @@
                 return;
             }
 
-            // Category wise group group karna
             const categories = {};
             groups.forEach(g => {
                 const cat = g.category || 'General';
@@ -73,7 +88,6 @@
                 categories[cat].push(g);
             });
 
-            // HTML generate karna
             for (const [category, items] of Object.entries(categories)) {
                 let html = `
                     <div class="border-b pb-4">
@@ -101,7 +115,6 @@
             displayGroups(filtered);
         }
 
-        // Page load hote hi dikhana shuru kar do
         displayGroups(allGroups);
     </script>
 </body>
