@@ -3,43 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GroupsOP - Unlimited WhatsApp & Telegram Hub</title>
+    <title>GroupsOP - Ultimate Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-[#f8f9fa] font-sans text-gray-800">
+<body class="bg-gray-100 font-sans text-gray-800">
 
-    <!-- Top Green Header -->
-    <header class="bg-[#007b5e] text-white p-6 shadow-lg">
-        <div class="max-w-md mx-auto">
-            <h1 class="text-3xl font-black tracking-wide text-center">GroupsOP</h1>
-            <p class="text-xs text-green-100 text-center mt-1">Unlimited WhatsApp & Telegram Groups & Channels</p>
-            
-            <!-- Search Bar -->
-            <div class="mt-4 relative">
-                <input type="text" id="searchInput" oninput="filterGroups()" placeholder="🔍 Search groups or channels..." class="w-full p-3.5 pl-4 pr-10 rounded-xl text-gray-800 text-sm focus:outline-none shadow-md bg-white">
-            </div>
-        </div>
+    <!-- Header -->
+    <header class="bg-[#007b5e] text-white p-6 shadow-md text-center">
+        <h1 class="text-3xl font-black">GroupsOP 🚀</h1>
+        <p class="text-xs text-green-100 mt-1">WhatsApp & Telegram Groups Directory</p>
+        
+        <!-- Search -->
+        <input type="text" id="searchInput" oninput="filterGroups()" placeholder="🔍 Search groups or channels..." class="w-full mt-4 p-3 rounded-xl text-gray-800 text-sm focus:outline-none shadow">
     </header>
 
     <div class="container mx-auto p-4 max-w-md">
         
         <!-- Action Buttons -->
-        <div class="flex flex-col gap-2.5 mb-6">
-            <a href="add.html" class="block bg-[#007b5e] text-white text-center py-3.5 px-4 rounded-xl font-bold text-base shadow-md hover:bg-[#00644d] transition flex items-center justify-center gap-2">
-                <span>+</span> Add Group or Channel
-            </a>
-            <a href="https://whatsapp.com/channel/0029Vb8KO7V8kyyOVT7fwn1T" target="_blank" class="block bg-blue-600 text-white text-center py-3 px-4 rounded-xl font-bold text-sm shadow-md hover:bg-blue-700 transition">
-                📢 Join Official WhatsApp Channel
-            </a>
+        <div class="flex gap-2 mb-4">
+            <a href="add.html" class="flex-1 bg-[#007b5e] text-white text-center py-3 rounded-xl font-bold text-sm shadow hover:bg-[#00644d]">+ Add Link</a>
+            <a href="https://whatsapp.com/channel/0029Vb8KO7V8kyyOVT7fwn1T" target="_blank" class="flex-1 bg-blue-600 text-white text-center py-3 rounded-xl font-bold text-sm shadow hover:bg-blue-700">📢 Join Channel</a>
         </div>
 
-        <!-- Groups List Container -->
+        <!-- Filter Tabs -->
+        <div class="flex gap-2 mb-4 overflow-x-auto pb-1">
+            <button onclick="filterPlatform('All')" class="bg-gray-800 text-white px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap">All</button>
+            <button onclick="filterPlatform('WhatsApp')" class="bg-green-600 text-white px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap">WhatsApp</button>
+            <button onclick="filterPlatform('Telegram')" class="bg-sky-500 text-white px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap">Telegram</button>
+        </div>
+
+        <!-- List -->
         <div id="group-list" class="space-y-4">
-            <p class="text-center text-gray-500 py-6">Loading groups...</p>
+            <p class="text-center text-gray-500 py-4">Loading...</p>
         </div>
     </div>
 
-    <!-- Firebase & Scripts -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -58,8 +56,9 @@
         const db = getFirestore(app);
 
         let allGroups = [];
+        let currentPlatform = 'All';
 
-        async function loadAllGroups() {
+        async function loadGroups() {
             try {
                 const querySnapshot = await getDocs(collection(db, "groups"));
                 allGroups = [];
@@ -67,7 +66,7 @@
                     allGroups.push(doc.data());
                 });
             } catch (e) {
-                console.log("Firebase load error: ", e);
+                console.log(e);
             }
             displayGroups(allGroups);
         }
@@ -77,11 +76,10 @@
             listDiv.innerHTML = "";
 
             if(groups.length === 0) {
-                listDiv.innerHTML = "<div class='bg-white p-6 rounded-2xl shadow-sm text-center text-gray-500 border'>No groups found. Click on 'Add Group' to add new links!</div>";
+                listDiv.innerHTML = "<div class='bg-white p-4 rounded-xl text-center text-gray-500'>No groups found here.</div>";
                 return;
             }
 
-            // Category & Type wise group sorting
             const categories = {};
             groups.forEach(g => {
                 const cat = g.category || 'General';
@@ -91,31 +89,24 @@
 
             for (const [category, items] of Object.entries(categories)) {
                 let html = `
-                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 mb-4">
-                        <h2 class="text-base font-bold text-gray-900 mb-3 pb-2 border-b flex items-center justify-between">
-                            <span>📂 ${category}</span>
-                            <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">${items.length} Groups</span>
-                        </h2>
-                        <div class="space-y-3">
+                    <div class="bg-white p-4 rounded-xl shadow-sm border mb-4">
+                        <h2 class="text-md font-bold text-gray-900 mb-3 border-b pb-2">📂 ${category}</h2>
+                        <div class="space-y-2.5">
                 `;
 
                 items.forEach(g => {
                     const type = g.type || 'WhatsApp Group';
-                    let badgeClass = "bg-green-100 text-green-800 border-green-200";
-                    let btnClass = "bg-green-600 hover:bg-green-700 text-white";
-                    
-                    if(type.includes('Telegram')) {
-                        badgeClass = "bg-sky-100 text-sky-800 border-sky-200";
-                        btnClass = "bg-sky-500 hover:bg-sky-600 text-white";
-                    }
+                    const isTG = type.includes('Telegram');
+                    const badgeColor = isTG ? 'bg-sky-100 text-sky-700' : 'bg-green-100 text-green-700';
+                    const btnBg = isTG ? 'bg-sky-500 hover:bg-sky-600' : 'bg-green-600 hover:bg-green-700';
 
                     html += `
-                        <div class="flex items-center justify-between bg-gray-50 p-2.5 rounded-xl border border-gray-100">
-                            <div class="pr-2">
-                                <h3 class="font-semibold text-gray-800 text-sm mb-1">${g.name}</h3>
-                                <span class="text-[10px] px-2 py-0.5 rounded-md font-bold border ${badgeClass}">${type}</span>
+                        <div class="flex items-center justify-between bg-gray-50 p-2.5 rounded-lg border">
+                            <div>
+                                <h4 class="font-bold text-sm text-gray-800">${g.name}</h4>
+                                <span class="text-[10px] px-2 py-0.5 rounded font-bold ${badgeColor}">${type}</span>
                             </div>
-                            <a href="${g.link}" target="_blank" class="${btnClass} px-4 py-2 rounded-lg font-bold text-xs shadow transition whitespace-nowrap">Join</a>
+                            <a href="${g.link}" target="_blank" class="${btnBg} text-white px-4 py-1.5 rounded-lg font-bold text-xs shadow">Join</a>
                         </div>
                     `;
                 });
@@ -125,13 +116,23 @@
             }
         }
 
+        window.filterPlatform = function(platform) {
+            currentPlatform = platform;
+            filterGroups();
+        }
+
         window.filterGroups = function() {
             const query = document.getElementById("searchInput").value.toLowerCase();
-            const filtered = allGroups.filter(g => g.name.toLowerCase().includes(query) || (g.category && g.category.toLowerCase().includes(query)));
+            const filtered = allGroups.filter(g => {
+                const matchesSearch = g.name.toLowerCase().includes(query) || (g.category && g.category.toLowerCase().includes(query));
+                const type = g.type || 'WhatsApp Group';
+                const matchesPlatform = currentPlatform === 'All' || (currentPlatform === 'WhatsApp' && type.includes('WhatsApp')) || (currentPlatform === 'Telegram' && type.includes('Telegram'));
+                return matchesSearch && matchesPlatform;
+            });
             displayGroups(filtered);
         }
 
-        loadAllGroups();
+        loadGroups();
     </script>
 </body>
 </html>
