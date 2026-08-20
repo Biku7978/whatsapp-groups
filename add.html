@@ -3,51 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Group or Channel - GroupsOP</title>
+    <title>GroupsOP - Unlimited WhatsApp & Telegram Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 font-sans p-4">
-    <div class="max-w-md mx-auto bg-white p-6 rounded-xl shadow-md">
-        <h2 class="text-xl font-bold text-[#007b5e] mb-4">Add Group or Channel</h2>
-        <form id="group-form">
-            <label class="block text-sm font-medium mb-1">Name (Group/Channel Name)</label>
-            <input type="text" id="g-name" required class="w-full p-2.5 border rounded-lg mb-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#007b5e]">
+<body class="bg-[#f8f9fa] font-sans text-gray-800">
 
-            <label class="block text-sm font-medium mb-1">Platform Type</label>
-            <select id="g-type" class="w-full p-2.5 border rounded-lg mb-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#007b5e]">
-                <option value="WhatsApp Group">WhatsApp Group</option>
-                <option value="WhatsApp Channel">WhatsApp Channel</option>
-                <option value="Telegram Group">Telegram Group</option>
-                <option value="Telegram Channel">Telegram Channel</option>
-            </select>
+    <!-- Top Green Header -->
+    <header class="bg-[#007b5e] text-white p-6 shadow-lg">
+        <div class="max-w-md mx-auto">
+            <h1 class="text-3xl font-black tracking-wide text-center">GroupsOP</h1>
+            <p class="text-xs text-green-100 text-center mt-1">Unlimited WhatsApp & Telegram Groups & Channels</p>
+            
+            <!-- Search Bar -->
+            <div class="mt-4 relative">
+                <input type="text" id="searchInput" oninput="filterGroups()" placeholder="🔍 Search groups or channels..." class="w-full p-3.5 pl-4 pr-10 rounded-xl text-gray-800 text-sm focus:outline-none shadow-md bg-white">
+            </div>
+        </div>
+    </header>
 
-            <label class="block text-sm font-medium mb-1">Category</label>
-            <select id="g-cat" class="w-full p-2.5 border rounded-lg mb-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#007b5e]">
-                <option value="Girls Group">Girls Group</option>
-                <option value="Only Girls Group">Only Girls Group</option>
-                <option value="Technology">Technology</option>
-                <option value="Entertainment">Entertainment</option>
-                <option value="Gaming">Gaming</option>
-                <option value="Education">Education</option>
-                <option value="Jobs & Internships">Jobs & Internships</option>
-                <option value="Movies & Web Series">Movies & Web Series</option>
-                <option value="Business">Business</option>
-                <option value="Devotional">Devotional</option>
-                <option value="General">General</option>
-            </select>
+    <div class="container mx-auto p-4 max-w-md">
+        
+        <!-- Action Buttons -->
+        <div class="flex flex-col gap-2.5 mb-6">
+            <a href="add.html" class="block bg-[#007b5e] text-white text-center py-3.5 px-4 rounded-xl font-bold text-base shadow-md hover:bg-[#00644d] transition flex items-center justify-center gap-2">
+                <span>+</span> Add Group or Channel
+            </a>
+            <a href="https://whatsapp.com/channel/0029Vb8KO7V8kyyOVT7fwn1T" target="_blank" class="block bg-blue-600 text-white text-center py-3 px-4 rounded-xl font-bold text-sm shadow-md hover:bg-blue-700 transition">
+                📢 Join Official WhatsApp Channel
+            </a>
+        </div>
 
-            <label class="block text-sm font-medium mb-1">Invite Link (URL)</label>
-            <input type="url" id="g-link" placeholder="https://chat.whatsapp.com/... ya https://t.me/..." required class="w-full p-2.5 border rounded-lg mb-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#007b5e]">
-
-            <button type="submit" id="sub-btn" class="w-full bg-[#007b5e] text-white py-3 rounded-lg font-bold hover:bg-[#00644d] transition text-sm">Submit Now</button>
-        </form>
-        <a href="index.html" class="block text-center text-sm text-gray-600 mt-4 hover:underline">← Back to Home</a>
+        <!-- Groups List Container -->
+        <div id="group-list" class="space-y-4">
+            <p class="text-center text-gray-500 py-6">Loading groups...</p>
+        </div>
     </div>
 
-    <!-- Firebase Scripts -->
+    <!-- Firebase & Scripts -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
           apiKey: "AIzaSyCJXVbgJQ_PJs8JhDKibJVJlUjpQ6qNxyE",
@@ -62,37 +57,81 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        document.getElementById("group-form").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById("sub-btn");
-            btn.innerText = "Saving...";
-            btn.disabled = true;
+        let allGroups = [];
 
-            const name = document.getElementById("g-name").value;
-            const type = document.getElementById("g-type").value;
-            const category = document.getElementById("g-cat").value;
-            const link = document.getElementById("g-link").value;
-
+        async function loadAllGroups() {
             try {
-                await addDoc(collection(db, "groups"), {
-                    name: name,
-                    type: type,
-                    category: category,
-                    link: link,
-                    createdAt: new Date()
+                const querySnapshot = await getDocs(collection(db, "groups"));
+                allGroups = [];
+                querySnapshot.forEach((doc) => {
+                    allGroups.push(doc.data());
                 });
-                alert("Successfully added!");
-                
-                document.getElementById("g-name").value = "";
-                document.getElementById("g-link").value = "";
-                btn.innerText = "Submit Now";
-                btn.disabled = false;
-            } catch (error) {
-                alert("Error: " + error.message);
-                btn.innerText = "Submit Now";
-                btn.disabled = false;
+            } catch (e) {
+                console.log("Firebase load error: ", e);
             }
-        });
+            displayGroups(allGroups);
+        }
+
+        window.displayGroups = function(groups) {
+            const listDiv = document.getElementById("group-list");
+            listDiv.innerHTML = "";
+
+            if(groups.length === 0) {
+                listDiv.innerHTML = "<div class='bg-white p-6 rounded-2xl shadow-sm text-center text-gray-500 border'>No groups found. Click on 'Add Group' to add new links!</div>";
+                return;
+            }
+
+            // Category & Type wise group sorting
+            const categories = {};
+            groups.forEach(g => {
+                const cat = g.category || 'General';
+                if (!categories[cat]) categories[cat] = [];
+                categories[cat].push(g);
+            });
+
+            for (const [category, items] of Object.entries(categories)) {
+                let html = `
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 mb-4">
+                        <h2 class="text-base font-bold text-gray-900 mb-3 pb-2 border-b flex items-center justify-between">
+                            <span>📂 ${category}</span>
+                            <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">${items.length} Groups</span>
+                        </h2>
+                        <div class="space-y-3">
+                `;
+
+                items.forEach(g => {
+                    const type = g.type || 'WhatsApp Group';
+                    let badgeClass = "bg-green-100 text-green-800 border-green-200";
+                    let btnClass = "bg-green-600 hover:bg-green-700 text-white";
+                    
+                    if(type.includes('Telegram')) {
+                        badgeClass = "bg-sky-100 text-sky-800 border-sky-200";
+                        btnClass = "bg-sky-500 hover:bg-sky-600 text-white";
+                    }
+
+                    html += `
+                        <div class="flex items-center justify-between bg-gray-50 p-2.5 rounded-xl border border-gray-100">
+                            <div class="pr-2">
+                                <h3 class="font-semibold text-gray-800 text-sm mb-1">${g.name}</h3>
+                                <span class="text-[10px] px-2 py-0.5 rounded-md font-bold border ${badgeClass}">${type}</span>
+                            </div>
+                            <a href="${g.link}" target="_blank" class="${btnClass} px-4 py-2 rounded-lg font-bold text-xs shadow transition whitespace-nowrap">Join</a>
+                        </div>
+                    `;
+                });
+
+                html += `</div></div>`;
+                listDiv.innerHTML += html;
+            }
+        }
+
+        window.filterGroups = function() {
+            const query = document.getElementById("searchInput").value.toLowerCase();
+            const filtered = allGroups.filter(g => g.name.toLowerCase().includes(query) || (g.category && g.category.toLowerCase().includes(query)));
+            displayGroups(filtered);
+        }
+
+        loadAllGroups();
     </script>
 </body>
 </html>
