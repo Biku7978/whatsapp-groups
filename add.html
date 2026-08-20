@@ -3,52 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add WhatsApp Group or Channel</title>
+    <title>Add Group or Channel - GroupsOP</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 font-sans p-4">
-    <div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow">
-        <h2 class="text-xl font-bold text-green-600 mb-4">Apna WhatsApp Group ya Channel Jodein</h2>
+    <div class="max-w-md mx-auto bg-white p-6 rounded-xl shadow-md">
+        <h2 class="text-xl font-bold text-[#007b5e] mb-4">Add Group or Channel</h2>
         <form id="group-form">
-            <label class="block text-sm font-medium mb-1">Name (Group ya Channel ka Naam)</label>
-            <input type="text" id="g-name" required class="w-full p-2 border rounded mb-3">
+            <label class="block text-sm font-medium mb-1">Name (Group/Channel Name)</label>
+            <input type="text" id="g-name" required class="w-full p-2.5 border rounded-lg mb-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#007b5e]">
 
-            <label class="block text-sm font-medium mb-1">Type (Select Karein)</label>
-            <select id="g-type" class="w-full p-2 border rounded mb-3">
+            <label class="block text-sm font-medium mb-1">Platform Type</label>
+            <select id="g-type" class="w-full p-2.5 border rounded-lg mb-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#007b5e]">
                 <option value="WhatsApp Group">WhatsApp Group</option>
                 <option value="WhatsApp Channel">WhatsApp Channel</option>
+                <option value="Telegram Group">Telegram Group</option>
+                <option value="Telegram Channel">Telegram Channel</option>
             </select>
 
             <label class="block text-sm font-medium mb-1">Category</label>
-            <select id="g-cat" class="w-full p-2 border rounded mb-3">
+            <select id="g-cat" class="w-full p-2.5 border rounded-lg mb-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#007b5e]">
+                <option value="Girls Group">Girls Group</option>
+                <option value="Only Girls Group">Only Girls Group</option>
                 <option value="Technology">Technology</option>
                 <option value="Entertainment">Entertainment</option>
                 <option value="Gaming">Gaming</option>
-                <option value="Friendship">Friendship</option>
                 <option value="Education">Education</option>
-                <option value="Jobs">Jobs & Internships</option>
-                <option value="Health">Health & Fitness</option>
-                <option value="Finance">Finance & Crypto</option>
-                <option value="Sports">Sports</option>
-                <option value="News">News Updates</option>
-                <option value="Shopping">Shopping & Deals</option>
-                <option value="Food">Food & Recipes</option>
-                <option value="Travel">Travel & Tourism</option>
-                <option value="Movies">Movies & Web Series</option>
-                <option value="Music">Music & Dance</option>
-                <option value="Business">Business Ideas</option>
-                <option value="Motivation">Motivation</option>
-                <option value="Science">Science</option>
-                <option value="Art">Art & Design</option>
-                <option value="Others">Others</option>
+                <option value="Jobs & Internships">Jobs & Internships</option>
+                <option value="Movies & Web Series">Movies & Web Series</option>
+                <option value="Business">Business</option>
+                <option value="Devotional">Devotional</option>
+                <option value="General">General</option>
             </select>
 
-            <label class="block text-sm font-medium mb-1">Invite Link (WhatsApp Link)</label>
-            <input type="url" id="g-link" placeholder="https://chat.whatsapp.com/..." required class="w-full p-2 border rounded mb-4">
+            <label class="block text-sm font-medium mb-1">Invite Link (URL)</label>
+            <input type="url" id="g-link" placeholder="https://chat.whatsapp.com/... ya https://t.me/..." required class="w-full p-2.5 border rounded-lg mb-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#007b5e]">
 
-            <button type="submit" id="sub-btn" class="w-full bg-green-600 text-white py-3 rounded font-bold hover:bg-green-700">Submit Karein</button>
+            <button type="submit" id="sub-btn" class="w-full bg-[#007b5e] text-white py-3 rounded-lg font-bold hover:bg-[#00644d] transition text-sm">Submit Now</button>
         </form>
-        <a href="index.html" class="block text-center text-sm text-gray-600 mt-4">← Home par wapas jayein</a>
+        <a href="index.html" class="block text-center text-sm text-gray-600 mt-4 hover:underline">← Back to Home</a>
     </div>
 
     <!-- Firebase Scripts -->
@@ -69,8 +62,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        document.getElementById("group-file").addEventListener?.(); // safe check
-
         document.getElementById("group-form").addEventListener("submit", async (e) => {
             e.preventDefault();
             const btn = document.getElementById("sub-btn");
@@ -90,16 +81,15 @@
                     link: link,
                     createdAt: new Date()
                 });
-                alert("Successfully add ho gaya!");
+                alert("Successfully added!");
                 
-                // Form clear karein taaki jaldi se doosra group daal sakein
                 document.getElementById("g-name").value = "";
                 document.getElementById("g-link").value = "";
-                btn.innerText = "Submit Karein";
+                btn.innerText = "Submit Now";
                 btn.disabled = false;
             } catch (error) {
-                alert("Kuch error aa gaya: " + error.message);
-                btn.innerText = "Submit Karein";
+                alert("Error: " + error.message);
+                btn.innerText = "Submit Now";
                 btn.disabled = false;
             }
         });
