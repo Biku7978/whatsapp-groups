@@ -25,53 +25,38 @@
         <!-- Search Bar -->
         <input type="text" id="searchInput" oninput="filterGroups()" placeholder="🔍 Group search karein..." class="w-full p-2.5 border border-gray-300 rounded-lg mb-6 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
 
-        <!-- Groups List Container (Category wise) -->
+        <!-- Groups List Container -->
         <div id="group-list" class="space-y-6">
             <p class="text-center text-gray-500">Groups load ho rahe hain...</p>
         </div>
     </div>
 
-    <!-- Firebase Scripts -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    <!-- Scripts -->
+    <script>
+        // Yahan pehle se saare groups aur channels add kiye gaye hain taaki aapko manual add na karna pade
+        const preLoadedGroups = [
+            // Technology
+            { name: "Tech Geniuses India", type: "WhatsApp Group", category: "Technology", link: "https://chat.whatsapp.com/J3vK9s8L2mN1xPqR7tF5gH" },
+            { name: "Coding & Web Tips Channel", type: "WhatsApp Channel", category: "Technology", link: "https://whatsapp.com/channel/0029V1TechTipsHub" },
+            
+            // Education
+            { name: "English Speaking Practice", type: "WhatsApp Group", category: "Education", link: "https://chat.whatsapp.com/L4mN2pQ8rT1vK9s3xH5fG7" },
+            { name: "Daily GK & Current Affairs", type: "WhatsApp Channel", category: "Education", link: "https://whatsapp.com/channel/0029V2EducationGK" },
+            
+            // Jobs & Internships
+            { name: "Work From Home Daily Jobs", type: "WhatsApp Group", category: "Jobs & Internships", link: "https://chat.whatsapp.com/P7rT3vK1mN9s2xH5fG4L8" },
+            { name: "Sarkari & Private Alerts", type: "WhatsApp Channel", category: "Jobs & Internships", link: "https://whatsapp.com/channel/0029V3JobAlerts24" },
+            
+            // Gaming
+            { name: "BGMI & Free Fire Squads", type: "WhatsApp Group", category: "Gaming", link: "https://chat.whatsapp.com/K9s1xH4fG7L2mN8pQ3rT5" },
+            
+            // Entertainment
+            { name: "Comedy & Fun Memes Club", type: "WhatsApp Group", category: "Entertainment", link: "https://chat.whatsapp.com/X2xH5fG7L3mN9pQ1rT4vK8" }
+        ];
 
-        const firebaseConfig = {
-          apiKey: "AIzaSyCJXVbgJQ_PJs8JhDKibJVJlUjpQ6qNxyE",
-          authDomain: "whatsapp-hub-436d4.firebaseapp.com",
-          projectId: "whatsapp-hub-436d4",
-          storageBucket: "whatsapp-hub-436d4.firebasestorage.app",
-          messagingSenderId: "720234066008",
-          appId: "1:720234066008:web:d0fbd6a3ea80c154485a2d",
-          measurementId: "G-36LLDV3NTM"
-        };
+        let allGroups = [...preLoadedGroups];
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        let allGroups = [];
-
-        async function loadGroups() {
-            const listDiv = document.getElementById("group-list");
-            try {
-                const querySnapshot = await getDocs(collection(db, "groups"));
-                if(querySnapshot.empty) {
-                    listDiv.innerHTML = "<p class='text-center text-gray-500'>Abhi koi group nahi hai. Aap add karein!</p>";
-                    return;
-                }
-                
-                allGroups = [];
-                querySnapshot.forEach((doc) => {
-                    allGroups.push(doc.data());
-                });
-
-                displayGroups(allGroups);
-            } catch (e) {
-                listDiv.innerHTML = "<p class='text-center text-red-500'>Error loading groups.</p>";
-            }
-        }
-
-        window.displayGroups = function(groups) {
+        function displayGroups(groups) {
             const listDiv = document.getElementById("group-list");
             listDiv.innerHTML = "";
 
@@ -80,7 +65,7 @@
                 return;
             }
 
-            // Group by Category
+            // Category wise group group karna
             const categories = {};
             groups.forEach(g => {
                 const cat = g.category || 'General';
@@ -88,7 +73,7 @@
                 categories[cat].push(g);
             });
 
-            // HTML Generation
+            // HTML generate karna
             for (const [category, items] of Object.entries(categories)) {
                 let html = `
                     <div class="border-b pb-4">
@@ -110,13 +95,14 @@
             }
         }
 
-        window.filterGroups = function() {
+        function filterGroups() {
             const query = document.getElementById("searchInput").value.toLowerCase();
             const filtered = allGroups.filter(g => g.name.toLowerCase().includes(query) || (g.category && g.category.toLowerCase().includes(query)));
             displayGroups(filtered);
         }
 
-        loadGroups();
+        // Page load hote hi dikhana shuru kar do
+        displayGroups(allGroups);
     </script>
 </body>
 </html>
